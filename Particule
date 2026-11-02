@@ -1,0 +1,29 @@
+
+#include <set>
+#include <list>
+#include <deque>
+#include <vector>
+
+class Particule{
+    private:
+        int id;
+        double masse;
+        double force;
+        std::vector<double> position;
+        std::vector<double> vitesse;
+    
+    public:
+        Particule(double masse);
+        double getMasse() const;
+        void setMasse(double masse);
+
+};
+
+std::list<Particule> listeParticules;
+
+int main(){
+    std::set<Particule> setParticules;
+    std::deque<Particule> dequeParticules;
+    std::vector<Particule> vectorParticules;
+    std::list<Particule> listParticules;
+}
