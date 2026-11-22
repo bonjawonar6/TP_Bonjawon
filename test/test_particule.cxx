@@ -29,9 +29,23 @@ void test_mutateurs(){
     assert(p.getForce()[0] == 7.0);
 }
 
+void test_comparaison(){
+    Particule p1(1,0,0.5,{0.0, 0.0, 0.0},{1.0, 1.0, 1.0});
+    Particule p2(2,1,1.5,{1.0, 2.0, 3.0},{4.0, 5.0, 6.0});
+
+    assert(p1 < p2);
+    assert(!(p2 < p1));
+
+    // Meme identifiant : aucune n'est plus petite que l'autre (equivalentes pour un std::set)
+    Particule p3(1,1,2.0,{5.0, 5.0, 5.0},{0.0, 0.0, 0.0});
+    assert(!(p1 < p3));
+    assert(!(p3 < p1));
+}
+
 int main() {
     test_constructeur();
     test_mutateurs();
+    test_comparaison();
     std::cout << "Tous les tests ont réussi !" << std::endl;
     return 0;
 }

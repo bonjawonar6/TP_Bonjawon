@@ -113,6 +113,14 @@ class  Particule{
          * @param f La force à définir
          */
         void setForce(const std::array<double, 3>& f);
+
+        /** @brief Compare deux particules selon leur identifiant
+         * (nécessaire pour ranger des particules dans un std::set).
+         * @param autre La particule à comparer
+         * @return true si l'identifiant de cette particule est strictement inférieur
+         *         à celui de autre
+         */
+        bool operator<(const Particule& autre) const;
         
 };
 

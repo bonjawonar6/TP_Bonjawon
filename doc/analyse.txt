@@ -1,0 +1,81 @@
+ANALYSE DU PROJET - SIMULATION DE PARTICULES
+=============================================
+
+1. Structure de données : la classe Particule (Q1)
+--------------------------------------------------
+
+Une particule est décrite par un identifiant, une catégorie, une masse,
+une position, une vitesse et une force. Les attributs sont privés et on y
+accède par des accesseurs (get) et des mutateurs (set), selon le principe
+d'encapsulation.
+
+Choix effectués :
+- Les grandeurs vectorielles (position, vitesse, force) sont stockées dans
+  des std::array<double, 3>. La taille est fixe et connue à la compilation,
+  donc il n'y a pas d'allocation dynamique, contrairement à std::vector.
+- Les accesseurs renvoient une référence constante pour éviter une copie
+  à chaque appel, tout en empêchant la modification de l'attribut.
+- La force n'est pas un paramètre du constructeur : elle est initialisée
+  à zéro puis calculée à partir des autres particules.
+- Un opérateur < compare les particules selon leur identifiant. Il est
+  nécessaire pour pouvoir les ranger dans un std::set.
+
+
+2. Génération aléatoire (Q2)
+----------------------------
+
+La fonction creerParticuleAleatoire tire la masse, la position et la
+vitesse avec un générateur std::mt19937. Le générateur est passé par
+référence : s'il était passé par valeur, chaque appel utiliserait une copie
+dans le même état et toutes les particules seraient identiques.
+
+La masse est tirée dans [0.000001 ; 1] et non [0 ; 1] pour éviter une masse
+nulle, qui provoquerait une division par zéro dans l'algorithme de
+Störmer-Verlet.
+
+
+3. Comparaison des collections (Q3)
+-----------------------------------
+
+Méthode :
+On compare std::vector, std::list, std::deque et std::set sur trois
+opérations, pour N = 64 à 65536 particules :
+- insertion des N particules ;
+- parcours en lecture (somme des masses) ;
+- parcours avec modification (déplacement de chaque particule).
+Les particules sont générées avant la mesure, pour ne chronométrer que les
+opérations sur la collection. Chaque mesure est répétée 10 fois et on garde
+le meilleur temps.
+
+Résultats pour N = 2048 (en microsecondes) :
+
+    collection   insertion   parcours   modification
+    vector          141         10.5         26
+    deque           168         38           53
+    list            306         46           59
+    set             536         64           impossible
+
+Observations :
+- std::vector est le plus rapide pour les trois opérations.
+- Les différences sont visibles dès les petites tailles (N = 64) et
+  restent du même ordre quand N augmente : les temps sont à peu près
+  proportionnels à N pour toutes les collections.
+- Le parcours est environ 4 à 6 fois plus lent avec list et set. Une
+  explication est que les éléments d'un vector sont contigus en mémoire,
+  ce qui utilise mieux le cache du processeur, alors que list et set
+  stockent chaque élément séparément.
+- Les éléments d'un std::set ne sont pas modifiables (ils sont constants,
+  car une modification pourrait changer l'ordre de tri). Le set ne convient
+  donc pas pour la simulation, où l'on modifie positions et vitesses à
+  chaque pas de temps.
+
+Limites :
+- Le programme est compilé sans optimisation (-g) : les temps absolus
+  seraient plus faibles avec -O2, mais l'ordre des collections ne devrait
+  pas changer.
+- Les mesures dépendent de la machine et de sa charge au moment du test.
+
+Conclusion :
+Pendant la simulation, on parcourt et on modifie toutes les particules à
+chaque pas de temps, alors qu'on ne les insère qu'une seule fois. On
+choisit donc std::vector pour la suite du projet.

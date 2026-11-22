@@ -53,3 +53,6 @@ void Particule::setForce(const std::array<double, 3>& f) {
 }
 
 
+bool Particule::operator<(const Particule& autre) const {
+    return identifiant < autre.identifiant;
+}
