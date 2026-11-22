@@ -1,0 +1,2 @@
+add_executable(demo_collection demo_collection.cxx)
+target_link_libraries(demo_collection particules)
