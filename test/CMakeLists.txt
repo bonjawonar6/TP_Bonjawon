@@ -1,0 +1,4 @@
+add_executable(test_particule test_particule.cxx)
+target_link_libraries(test_particule particules)
+
+add_test(NAME test_particule COMMAND test_particule)
