@@ -1,4 +1,7 @@
 add_executable(test_particule test_particule.cxx)
 target_link_libraries(test_particule particules)
-
 add_test(NAME test_particule COMMAND test_particule)
+
+add_executable(test_generation test_generation.cxx)
+target_link_libraries(test_generation particules)
+add_test(NAME test_generation COMMAND test_generation)
