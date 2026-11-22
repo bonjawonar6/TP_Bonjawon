@@ -3,3 +3,6 @@ target_link_libraries(demo_collection particules)
 
 add_executable(demo_benchmark demo_benchmark.cxx)
 target_link_libraries(demo_benchmark particules)
+
+add_executable(demo_systeme_solaire demo_systeme_solaire.cxx)
+target_link_libraries(demo_systeme_solaire particules)

@@ -1,1 +1,1 @@
-add_library(particules particule.cxx generation.cxx)
+add_library(particules particule.cxx generation.cxx verlet.cxx)

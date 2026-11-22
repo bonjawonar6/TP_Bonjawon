@@ -79,3 +79,58 @@ Conclusion :
 Pendant la simulation, on parcourt et on modifie toutes les particules à
 chaque pas de temps, alors qu'on ne les insère qu'une seule fois. On
 choisit donc std::vector pour la suite du projet.
+
+
+4. Algorithme de Störmer-Verlet (Q4)
+------------------------------------
+
+L'algorithme est découpé en deux fonctions (fichier src/verlet.cxx) :
+- calculerForces : pour chaque particule i, on additionne les forces
+  F_ij = mi * mj / r^3 * r_ij exercées par toutes les autres particules j.
+  C'est une double boucle, donc le coût est proportionnel à N^2.
+- pasVerlet : un pas de temps de l'algorithme. On met à jour les positions
+  en gardant les anciennes forces, on recalcule les forces, puis on met à
+  jour les vitesses avec la moyenne des anciennes et nouvelles forces.
+
+Deux tests simples vérifient le code : deux masses égales s'attirent avec
+des forces opposées, et une particule seule avance en ligne droite.
+
+
+5. Vérification sur le système solaire (Q5)
+-------------------------------------------
+
+On simule le Soleil, la Terre, Jupiter et la comète de Halley avec
+dt = 0.015 et t_end = 468.5 (programme demo_systeme_solaire).
+
+Plusieurs arguments indiquent que la simulation est correcte :
+
+- Forme des orbites : en traçant les positions, la Terre et Jupiter
+  décrivent des cercles de rayon environ 1 et 5.36, et Halley une ellipse
+  très allongée. Les orbites se referment sur elles-mêmes.
+- Retour de Halley : à la fin de la simulation, Halley est revenue près de
+  sa position de départ (34.75, 0). La durée simulée correspond donc à peu
+  près à une période de la comète (environ 75 ans, le temps 2*pi
+  correspondant à une année terrestre).
+- Conservation de l'énergie : l'énergie totale (cinétique + potentielle)
+  vaut -9.34239e-05 au début et à la fin, avec un écart relatif d'environ
+  3e-08. Un système isolé doit conserver son énergie, et le schéma de
+  Störmer-Verlet est connu pour bien la conserver sur des temps longs.
+- Ordres de grandeur : la Terre fait environ 75 tours pendant la
+  simulation, ce qui est cohérent avec la période de Halley.
+
+Remarque : le Soleil n'est pas tout à fait immobile, il dérive lentement
+vers les x négatifs (jusqu'à x = -0.19 environ). C'est normal : la quantité
+de mouvement totale initiale n'est pas nulle (Jupiter part avec une vitesse
+-0.425), donc tout le système se déplace légèrement. C'est aussi pour cela
+que l'orbite de la Terre paraît un peu épaissie sur le tracé.
+
+
+6. Sauvegarde des résultats (Q6)
+--------------------------------
+
+À chaque itération, le programme écrit une ligne dans trajectoires.txt :
+    t  x_soleil y_soleil  x_terre y_terre  x_jupiter y_jupiter  x_halley y_halley
+Les positions sont lues avec les accesseurs (getPosition) et non par accès
+direct aux attributs. Le fichier fait 31234 lignes. On peut tracer les
+orbites avec gnuplot, par exemple :
+    plot 'trajectoires.txt' u 4:5 w l t 'Terre', '' u 6:7 w l t 'Jupiter'
